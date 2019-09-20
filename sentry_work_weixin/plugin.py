@@ -14,13 +14,13 @@ class WorkWeixinNotificationPlugin(NotificationPlugin):
     title = 'Work Weixin Notifications'
     slug = 'sentry_work_weixin'
     author = 'Eugene'
-    author_url = 'http://gitlab-test.dianmi365.com:81/eugene/sentry-work-weixin'
+    author_url = 'https://github.com/EugeneLiu/sentry-work-weixin'
     version = __version__
     description = package_doc
     resource_links = [
-        ('Source', 'http://gitlab-test.dianmi365.com:81/eugene/sentry-work-weixin'),
-        ('Bug Tracker', 'http://gitlab-test.dianmi365.com:81/eugene/sentry-work-weixin/issues'),
-        ('README', 'http://gitlab-test.dianmi365.com:81/eugene/sentry-work-weixin/blob/master/README.md'),
+        ('Source', 'https://github.com/EugeneLiu/sentry-work-weixin'),
+        ('Bug Tracker', 'https://github.com/EugeneLiu/sentry-work-weixin/issues'),
+        ('README', 'https://github.com/EugeneLiu/sentry-work-weixin/blob/master/README.md'),
     ]
 
     conf_key = slug
@@ -41,10 +41,7 @@ class WorkWeixinNotificationPlugin(NotificationPlugin):
         if not self.is_configured(project):
             return
 
-        if group.is_ignored():
-            return
-
-        key = self.get_option('key', group.project)
+        key = self.get_option('key', project)
         url = Work_Weixin_API.format(key=key)
         values = self.build_message(project, group, event)
         self.send_message(url, values)
@@ -55,7 +52,7 @@ class WorkWeixinNotificationPlugin(NotificationPlugin):
         values = {
             "msgtype": "markdown",
             "markdown": {
-                "content": u"*[Sentry]* {project_name} {tag[level]}: *{title}*\n```{message}```\n{url}".format(
+                "content": u"**[Sentry] [{project_name}] {tag[level]}: {title}**\n> ```{message}```\n\n[点击查看详情]({url})".format(
                     project_name=project.name,
                     title=event.title,
                     tag=the_tags,
@@ -67,4 +64,4 @@ class WorkWeixinNotificationPlugin(NotificationPlugin):
         return values
 
     def send_message(self, url, values):
-        return http.safe_urlopen(url, method="POST", data=values, timeout=5)
+        return http.safe_urlopen(url, method="POST", json=values)
