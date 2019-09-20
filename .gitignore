@@ -1,0 +1,7 @@
+*.pyc
+.git
+.idea/
+build/
+dist/
+*.egg-info/
+*.swp
